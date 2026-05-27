@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>TechNova Finance Dashboard</title>
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #1d4ed8, #38bdf8);
+            color: #222;
+            overflow-x: hidden;
+        }
+
+        /* ================= NAVBAR ================= */
+
+        header {
+            width: 100%;
+            padding: 18px 8%;
+            background: rgba(15, 23, 42, 0.92);
+            backdrop-filter: blur(10px);
+
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        /* ================= ANIMATED LOGO ================= */
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            cursor: pointer;
+        }
+
+        .logo span {
+            color: white;
+            font-size: 30px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            transition: 0.4s;
+        }
+
+        .logo-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #38bdf8, #2563eb, #06b6d4);
+            position: relative;
+
+            animation: pulse 2.5s infinite ease-in-out;
+
+            box-shadow: 0 0 25px rgba(56, 189, 248, 0.8);
+        }
+
+        .logo-icon::before {
+            content: "";
+            position: absolute;
+            inset: -7px;
+
+            border-radius: 50%;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-top: 3px solid white;
+
+            animation: rotate 3s linear infinite;
+        }
+
+        .logo-icon::after {
+            content: "";
+            position: absolute;
+            inset: 11px;
+            border-radius: 50%;
+            background: white;
+            box-shadow: 0 0 18px rgba(255, 255, 255, 0.9);
+        }
+
+        .logo:hover .logo-icon {
+            transform: scale(1.12);
+        }
+
+        .logo:hover span {
+            color: #38bdf8;
+        }
+
+        @keyframes rotate {
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        @keyframes pulse {
+
+            0% {
+                transform: scale(1);
+                box-shadow: 0 0 15px rgba(56, 189, 248, 0.5);
+            }
+
+            50% {
+                transform: scale(1.08);
+                box-shadow: 0 0 40px rgba(56, 189, 248, 1);
+            }
+
+            100% {
+                transform: scale(1);
+                box-shadow: 0 0 15px rgba(56, 189, 248, 0.5);
+            }
+        }
+
+        /* ================= NAV LINKS ================= */
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 35px;
+        }
+
+        nav ul li a {
+            text-decoration: none;
+            color: #e2e8f0;
+            font-weight: 500;
+            position: relative;
+            transition: 0.3s;
+        }
+
+        nav ul li a:hover {
+            color: #38bdf8;
+        }
+
+        nav ul li a::after {
+            content: "";
+            position: absolute;
+            width: 0%;
+            height: 2px;
+            background: #38bdf8;
+            left: 0;
+            bottom: -5px;
+            transition: 0.4s;
+        }
+
+        nav ul li a:hover::after {
+            width: 100%;
+        }
+
+        /* ================= HERO SECTION ================= */
+
+        .hero {
+            min-height: 45vh;
+
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+
+            text-align: center;
+            padding: 80px 10%;
+            color: white;
+        }
+
+        .hero h1 {
+            font-size: 60px;
+            margin-bottom: 20px;
+            animation: fadeUp 1s ease;
+        }
+
+        .hero p {
+            max-width: 750px;
+            line-height: 1.9;
+            font-size: 18px;
+            color: #e2e8f0;
+            animation: fadeUp 1.4s ease;
+        }
+
+        @keyframes fadeUp {
+
+            from {
+                opacity: 0;
+                transform: translateY(40px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0px);
+            }
+        }
+
+        /* ================= DASHBOARD ================= */
+
+        .dashboard {
+            width: 92%;
+            max-width: 1400px;
+            margin: 40px auto 70px;
+
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(420px, 1fr));
+            gap: 35px;
+        }
+
+        .chart-card {
+            background: rgba(255, 255, 255, 0.96);
+            border-radius: 24px;
+
+            padding: 30px;
+
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+
+            transition: 0.4s;
+        }
+
+        .chart-card:hover {
+            transform: translateY(-10px);
+        }
+
+        .chart-card h2 {
+            font-size: 24px;
+            margin-bottom: 20px;
+            color: #0f172a;
+
+            border-left: 6px solid #38bdf8;
+            padding-left: 14px;
+        }
+
+        canvas {
+            width: 100% !important;
+            height: 350px !important;
+        }
+
+        /* ================= FOOTER ================= */
+
+        footer {
+            background: #0f172a;
+            text-align: center;
+            color: #cbd5e1;
+
+            padding: 25px;
+            font-size: 15px;
+        }
+
+        /* ================= RESPONSIVE ================= */
+
+        @media(max-width:900px) {
+
+            header {
+                flex-direction: column;
+                gap: 20px;
+            }
+
+            nav ul {
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 18px;
+            }
+
+            .hero h1 {
+                font-size: 42px;
+            }
+
+            .dashboard {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+
+</head>
+
+<body>
+
+    <!-- ================= NAVBAR ================= -->
+
+    <header>
+
+        <div class="logo">
+            <div class="logo-icon"></div>
+            <span>TechNova</span>
+        </div>
+
+        <nav>
+            <ul>
+                <li><a href="#">Home</a></li>
+                <li><a href="#">Analytics</a></li>
+                <li><a href="#">Reports</a></li>
+                <li><a href="#">Dashboard</a></li>
+                <li><a href="#">Contact</a></li>
+            </ul>
+        </nav>
+
+    </header>
+
+    <!-- ================= HERO ================= -->
+
+    <section class="hero">
+
+        <h1>Financial Analytics Dashboard</h1>
+
+        <p>
+            A modern and animated finance dashboard built using
+            HTML, CSS, JavaScript, and Chart.js. Visualize revenue,
+            expenses, and profit analytics with beautiful interactive charts.
+        </p>
+
+    </section>
+
+    <!-- ================= DASHBOARD ================= -->
+
+    <section class="dashboard">
+
+        <div class="chart-card">
+            <h2>Line Chart</h2>
+            <canvas id="myChart1"></canvas>
+        </div>
+
+        <div class="chart-card">
+            <h2>Bar Chart</h2>
+            <canvas id="myChart2"></canvas>
+        </div>
+
+        <div class="chart-card">
+            <h2>Pie Chart</h2>
+            <canvas id="myChart3"></canvas>
+        </div>
+
+    </section>
+
+    <!-- ================= FOOTER ================= -->
+
+    <footer>
+        © 2026 TechNova | Built with HTML, CSS, JavaScript & Chart.js
+    </footer>
+
+    <!-- ================= CHART JS ================= -->
+
+    <script>
+
+        const ctx1 = document.getElementById('myChart1');
+        const ctx2 = document.getElementById('myChart2');
+        const ctx3 = document.getElementById('myChart3');
+
+        const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'];
+
+        const revenue = [50000, 60000, 55000, 70000, 75000, 80000];
+
+        const expenses = [30000, 35000, 32000, 40000, 42000, 45000];
+
+        const profit = [20000, 25000, 23000, 30000, 33000, 35000];
+
+        // ================= LINE CHART =================
+
+        new Chart(ctx1, {
+
+            type: 'line',
+
+            data: {
+                labels: months,
+
+                datasets: [
+                    {
+                        label: 'Revenue',
+                        data: revenue,
+                        borderColor: 'blue',
+                        backgroundColor: 'lightblue',
+                        fill: false
+                    },
+
+                    {
+                        label: 'Expenses',
+                        data: expenses,
+                        borderColor: 'red',
+                        backgroundColor: 'pink',
+                        fill: false
+                    },
+
+                    {
+                        label: 'Profit',
+                        data: profit,
+                        borderColor: 'green',
+                        backgroundColor: 'lightgreen',
+                        fill: false
+                    }
+                ]
+            },
+
+            options: {
+
+                responsive: true,
+                maintainAspectRatio: false,
+
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'bottom',
+
+                        labels: {
+                            color: '#111',
+                            padding: 20,
+
+                            font: {
+                                size: 14,
+                                weight: 'bold'
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        // ================= BAR CHART =================
+
+        new Chart(ctx2, {
+
+            type: 'bar',
+
+            data: {
+
+                labels: months,
+
+                datasets: [{
+                    label: 'Revenue',
+                    data: revenue,
+                    backgroundColor: 'blue',
+                }]
+            },
+
+            options: {
+
+                responsive: true,
+                maintainAspectRatio: false,
+
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'bottom',
+
+                        labels: {
+                            color: '#111',
+                            padding: 20,
+
+                            font: {
+                                size: 14,
+                                weight: 'bold'
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        // ================= PIE CHART =================
+
+        new Chart(ctx3, {
+
+            type: 'pie',
+
+            data: {
+
+                labels: ['Reinvestment', 'Salary', 'Investments'],
+
+                datasets: [{
+                    label: 'June Financials',
+
+                    data: [40, 35, 25],
+
+                    backgroundColor: ['blue', 'red', 'green']
+                }]
+            },
+
+            options: {
+
+                responsive: true,
+                maintainAspectRatio: false,
+
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'bottom',
+
+                        labels: {
+                            color: '#111',
+                            padding: 20,
+
+                            font: {
+                                size: 14,
+                                weight: 'bold'
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+    </script>
+
+</body>
+
+</html>
